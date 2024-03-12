@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_dinamik_ortalama_hesaplama/constants/app_constant.dart';
 import 'package:flutter_dinamik_ortalama_hesaplama/helper/data_helper.dart';
+import 'package:flutter_dinamik_ortalama_hesaplama/model/ders.dart';
 import 'package:flutter_dinamik_ortalama_hesaplama/widgets/ortalama_goster.dart';
 
 class OrtalamaHesaplaApp extends StatefulWidget {
@@ -16,6 +17,7 @@ class _OrtalamaHesaplaAppState extends State<OrtalamaHesaplaApp> {
 
   double secilenHarfDegeri = 2;
   double secilenKrediDegeri = 2;
+  String girilenDersAdi = ' ';
 
   @override
   Widget build(BuildContext context) {
@@ -47,8 +49,8 @@ class _OrtalamaHesaplaAppState extends State<OrtalamaHesaplaApp> {
                 flex: 1,
                 child: Container(
                   child: Ortalama_goster(
-                    ortalama: 4.512,
-                    dersSayisi: 7,
+                    ortalama: DataHelper.ortalamaHesapla(),
+                    dersSayisi: DataHelper.tumEklenenDersler.length,
                   ),
                   color: Colors.yellow,
                 ),
@@ -78,7 +80,10 @@ class _OrtalamaHesaplaAppState extends State<OrtalamaHesaplaApp> {
             children: [
               _BuildHarfler(),
               _BuildKrediler(),
-              IconButton(onPressed: (){}, icon: Icon(Icons.arrow_forward_ios_rounded),style: Sabitler.IconbuttonStyle),
+              IconButton(
+                  onPressed: _DersEkleveOrtalamaHesapla,
+                  icon: Icon(Icons.arrow_forward_ios_rounded),
+                  style: Sabitler.IconbuttonStyle),
             ],
           )
         ],
@@ -88,6 +93,17 @@ class _OrtalamaHesaplaAppState extends State<OrtalamaHesaplaApp> {
 
   _buildTextFormField() {
     return TextFormField(
+      onSaved: (deger) {
+        setState(() {
+          girilenDersAdi = deger!;
+        });
+      },
+      validator: (s) {
+        if (s!.length <= 0) {
+          return 'Ders adini giriniz';
+        } else
+          return null;
+      },
       decoration: InputDecoration(
         hintText: 'Matematik',
         border: OutlineInputBorder(
@@ -109,10 +125,11 @@ class _OrtalamaHesaplaAppState extends State<OrtalamaHesaplaApp> {
       child: DropdownButton<double>(
         value: secilenHarfDegeri,
         items: DataHelper.tumDerslerinHarfleri(),
-        underline: Container(),//Dropdownbutton altındaki çizgiyi kaldırmak için
+        underline:
+            Container(), //Dropdownbutton altındaki çizgiyi kaldırmak için
         onChanged: (deger) {
           setState(() {
-            secilenHarfDegeri =deger!;
+            secilenHarfDegeri = deger!;
           });
         },
       ),
@@ -128,13 +145,26 @@ class _OrtalamaHesaplaAppState extends State<OrtalamaHesaplaApp> {
       child: DropdownButton<double>(
         value: secilenKrediDegeri,
         items: DataHelper.tumDerslerinKredileri(),
-        underline: Container(),//Dropdownbutton altındaki çizgiyi kaldırmak için
+        underline:
+            Container(), //Dropdownbutton altındaki çizgiyi kaldırmak için
         onChanged: (deger) {
           setState(() {
-            secilenKrediDegeri =deger!;
+            secilenKrediDegeri = deger!;
           });
         },
       ),
     );
+  }
+
+  _DersEkleveOrtalamaHesapla() {
+    if (formKey.currentState!.validate()) {
+      formKey.currentState!.save();
+      var eklenecekDers = Ders(
+          ad: girilenDersAdi,
+          harfDegeri: secilenHarfDegeri,
+          krediDegeri: secilenKrediDegeri);
+      DataHelper.DersEkle(eklenecekDers);
+      setState(() {});
+    }
   }
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dinamik_ortalama_hesaplama/model/ders.dart';
 
 class DataHelper {
 /*
@@ -44,15 +45,43 @@ FF / 0.00 / 0 – 44
         return -1;
     }
   }
-  static List<DropdownMenuItem<double>> tumDerslerinHarfleri(){
-    return _tumDerslerinHarfleri().map((e) => DropdownMenuItem(child: Text(e),value: _harfNotaCevir(e),)).toList();
+
+  static List<DropdownMenuItem<double>> tumDerslerinHarfleri() {
+    return _tumDerslerinHarfleri()
+        .map((e) => DropdownMenuItem(
+              child: Text(e),
+              value: _harfNotaCevir(e),
+            ))
+        .toList();
   }
 
-  static List<int> _tumKrediler(){
-    return List.generate(10, (index) => index+1).toList();
+  static List<int> _tumKrediler() {
+    return List.generate(10, (index) => index + 1).toList();
   }
 
-  static List<DropdownMenuItem<double>> tumDerslerinKredileri(){
-    return _tumKrediler().map((e) => DropdownMenuItem(child: Text(e.toString()),value: e.toDouble(),)).toList();
+  static List<DropdownMenuItem<double>> tumDerslerinKredileri() {
+    return _tumKrediler()
+        .map((e) => DropdownMenuItem(
+              child: Text(e.toString()),
+              value: e.toDouble(),
+            ))
+        .toList();
+  }
+
+  static List<Ders> tumEklenenDersler = [];
+
+  static DersEkle(Ders ders) {
+    tumEklenenDersler.add(ders);
+  }
+
+  static double ortalamaHesapla() {
+    double toplamNot = 0;
+    double toplamKredi = 0;
+
+    tumEklenenDersler.forEach((element) {
+      toplamKredi += element.krediDegeri;
+      toplamNot = toplamNot + (element.krediDegeri * element.harfDegeri);
+    });
+    return toplamNot / toplamKredi;
   }
 }
