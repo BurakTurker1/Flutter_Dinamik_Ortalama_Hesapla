@@ -62,7 +62,14 @@ class _OrtalamaHesaplaAppState extends State<OrtalamaHesaplaApp> {
           //notların gelcegi Liste
           Expanded(
             child: Container(
-              child: DersListesi(),
+              child: DersListesi(
+                onDismis: (index){
+                  DataHelper.tumEklenenDersler.removeAt(index);
+                  setState(() {
+                    
+                  });
+                },
+              ),
               color: Colors.blue,
             ),
           ),
